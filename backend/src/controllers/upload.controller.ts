@@ -2,10 +2,10 @@ import { Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import prisma from '../../config/database';
-import { AppError } from '../../middleware/errorHandler';
-import { AuthRequest } from '../../middleware/auth';
-import { emitNotification } from '../../utils/socket';
+import prisma from '..//database';
+import { AppError } from '..//errorHandler';
+import { AuthRequest } from '..//auth';
+import { emitNotification } from '..//socket';
 
 // Configure multer storage
 const storage = multer.diskStorage({
@@ -278,3 +278,5 @@ export const getFileInfo = async (req: AuthRequest, res: Response) => {
     },
   });
 };
+
+

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import prisma from '../../config/database';
-import { generateAccessToken, generateRefreshToken, verifyToken } from '../../utils/jwt';
-import { AppError } from '../../middleware/errorHandler';
+import prisma from '..//database';
+import { generateAccessToken, generateRefreshToken, verifyToken } from '..//jwt';
+import { AppError } from '..//errorHandler';
 
 interface AuthRequest extends Request {
   user?: {
@@ -272,3 +272,5 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
 
   res.status(200).json({ message: 'Password changed successfully' });
 };
+
+

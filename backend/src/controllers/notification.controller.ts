@@ -1,13 +1,13 @@
 import { Response } from 'express';
-import prisma from '../../config/database';
-import { AppError } from '../../middleware/errorHandler';
-import { AuthRequest } from '../../middleware/auth';
+import prisma from '..//database';
+import { AppError } from '..//errorHandler';
+import { AuthRequest } from '..//auth';
 import {
   parsePaginationParams,
   createPaginatedResponse,
   PaginatedResponse,
-} from '../../utils/pagination';
-import { emitNotification } from '../../utils/socket';
+} from '..//pagination';
+import { emitNotification } from '..//socket';
 
 // @desc    Get user notifications (paginated)
 // @route   GET /api/notifications
@@ -150,3 +150,5 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
     byType,
   });
 };
+
+
