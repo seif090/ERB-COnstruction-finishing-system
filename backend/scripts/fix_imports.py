@@ -1,5 +1,5 @@
 from pathlib import Path
-root = Path('..').resolve().joinpath('backend', 'src', 'controllers')
+root = Path('backend/src/controllers')
 replacements = {
     "from '..//database'": "from '../config/database'",
     'from "..//database"': 'from "../config/database"',

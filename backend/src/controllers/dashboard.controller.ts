@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import prisma from '..//database';
-import { AppError } from '..//errorHandler';
-import { AuthRequest } from '..//auth';
-import { emitNotification } from '..//socket';
+import prisma from '../config/database';
+import { AppError } from '../middleware/errorHandler';
+import { AuthRequest } from '../middleware/auth';
+import { emitNotification } from '../utils/socket';
 
 // @desc    Get dashboard overview (all KPIs)
 // @route   GET /api/dashboard/overview

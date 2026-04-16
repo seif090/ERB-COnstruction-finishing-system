@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import prisma from '..//database';
-import { generateAccessToken, generateRefreshToken, verifyToken } from '..//jwt';
-import { AppError } from '..//errorHandler';
+import prisma from '../config/database';
+import { generateAccessToken, generateRefreshToken, verifyToken } from '../utils/jwt';
+import { AppError } from '../middleware/errorHandler';
 
 interface AuthRequest extends Request {
   user?: {
