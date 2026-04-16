@@ -1,18 +1,22 @@
 import { Server as SocketIOServer } from 'socket.io';
 
 export const emitNotification = (
-  io: SocketIOServer,
+  io: SocketIOServer | any,
   userId: string,
   event: string,
   data: any
 ) => {
-  io.to(`user_${userId}`).emit(event, data);
+  if (io && typeof io.to === 'function') {
+    io.to(`user_${userId}`).emit(event, data);
+  }
 };
 
 export const emitBroadcast = (
-  io: SocketIOServer,
+  io: SocketIOServer | any,
   event: string,
   data: any
 ) => {
-  io.emit(event, data);
+  if (io && typeof io.emit === 'function') {
+    io.emit(event, data);
+  }
 };

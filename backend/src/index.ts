@@ -31,36 +31,22 @@ dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
+const isVercel = process.env.VERCEL === '1';
 
-// Create HTTP server
-const server = http.createServer(app);
+const createNoopSocket = () => {
+  const noop: any = {
+    to: () => noop,
+    emit: () => undefined,
+  };
 
-// Setup Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: process.env.SOCKET_CORS_ORIGIN || 'http://localhost:4200',
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
-});
+  return noop;
+};
 
 // Make io accessible to routes
-app.set('io', io);
+app.set('io', createNoopSocket());
 
-// Socket.IO connection handling
-io.on('connection', (socket) => {
-  console.log(`Client connected: ${socket.id}`);
-
-  // Join user-specific room for targeted notifications
-  socket.on('join', (userId: string) => {
-    socket.join(`user_${userId}`);
-    console.log(`User ${userId} joined room`);
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`Client disconnected: ${socket.id}`);
-  });
-});
+let server: http.Server | null = null;
+let io: Server | any = null;
 
 // ============================================
 // Middleware
@@ -125,15 +111,47 @@ app.use((_req: Request, res: Response) => {
 // Global error handler
 app.use(errorHandler);
 
-// ============================================
-// Start Server
-// ============================================
+if (!isVercel) {
+  // Create HTTP server
+  server = http.createServer(app);
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-  console.log(`🔗 Health Check: http://localhost:${PORT}/health`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+  // Setup Socket.IO
+  io = new Server(server, {
+    cors: {
+      origin: process.env.SOCKET_CORS_ORIGIN || 'http://localhost:4200',
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+  });
 
-export { app, io };
+  // Make io accessible to routes
+  app.set('io', io);
+
+  // Socket.IO connection handling
+  io.on('connection', (socket) => {
+    console.log(`Client connected: ${socket.id}`);
+
+    // Join user-specific room for targeted notifications
+    socket.on('join', (userId: string) => {
+      socket.join(`user_${userId}`);
+      console.log(`User ${userId} joined room`);
+    });
+
+    socket.on('disconnect', () => {
+      console.log(`Client disconnected: ${socket.id}`);
+    });
+  });
+
+  // Start the server only when running locally or in a non-Vercel environment
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+    console.log(`🔗 Health Check: http://localhost:${PORT}/health`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+} else {
+  console.log('Running in Vercel serverless mode: socket.io is disabled and will use noop emitters.');
+}
+
+export { app };
+
